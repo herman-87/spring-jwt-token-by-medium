@@ -13,15 +13,18 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, JwtAuthorizationFilter jwtAuthorizationFilter) {
         this.userDetailsService = customUserDetailsService;
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
     }
 
     @Bean
@@ -49,7 +52,8 @@ public class SecurityConfig {
                 .sessionManagement(
                         httpSecuritySessionManagementConfigurer ->
                                 httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                )
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
