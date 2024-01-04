@@ -30,6 +30,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .roles(roles.toArray(new String[0]))
                 .build();
 
-        return null;
+        return userDetails;
     }
 }
